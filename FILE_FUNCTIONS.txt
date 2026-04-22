@@ -1,0 +1,96 @@
+Smart Badminton Analytics - File Functions Breakdown
+
+=========================================
+ROOT DIRECTORY
+=========================================
+
+MainActivity.java
+- Serves as the primary entry point and host for all UI fragments.
+- Manages the Bottom Navigation Bar and Toolbar.
+- Handles global Android runtime permissions (Bluetooth, Location, Vibrate).
+
+MainViewModel.java
+- The central data coordinator (MVVM).
+- Implements DeviceObserver to receive BLE events.
+- Orchestrates raw data buffering, parsing, physics calculation, and ML inference.
+- Exposes all reactive data to the UI layer via LiveData.
+
+ActionTrailView.java
+- A custom Android View for high-performance 2D/3D swing path rendering.
+- Uses Path.quadTo() for Bezier curve smoothing.
+- Implements speed-based color gradients (Cyan to Red).
+
+=========================================
+BLE PACKAGE (com.example.badminton.ble)
+=========================================
+
+DeviceManager.java
+- The core Bluetooth manager leveraging the Nordic BLE Library.
+- Handles device scanning, connection state management, and MTU negotiation.
+- Manages notification callbacks for swing data and battery level.
+
+NordicBleManager.java / BleManager.java / BadmintonBLEManager.java
+- Legacy/Obsolete files from the iterative development process.
+- Consolidated into the robust DeviceManager.java.
+
+=========================================
+UI PACKAGE (com.example.badminton.ui)
+=========================================
+
+SportFragment.java
+- The home screen providing connectivity status, battery info, and RSSI strength.
+- Contains the main "Connect" trigger and Real-Time data stream toggle.
+
+RealTimeFragment.java
+- A live dashboard showing semi-circular gauges for Power, Speed, and Backswing.
+- Displays the skeletal silhouette and real-time shot classification label.
+- Manages haptic feedback (vibration) triggers for powerful smashes.
+
+ActionTrailFragment.java
+- Visualizes the last captured swing arc on a dedicated canvas.
+- Displays synchronized line charts comparing Power and Speed over the swing duration.
+
+StyleFragment.java
+- Provides performance analytics via a Donut Chart showing shot type distribution.
+- Categorizes playing style (e.g., Aggressive, Balanced) based on swing history.
+
+CaloriesFragment.java
+- Tracks metabolic load using a circular progress ring.
+- Calculates kcal burnt per swing based on biomechanical intensity (MET values).
+
+DeviceScanDialogFragment.java
+- A popup UI for device discovery.
+- Displays separate lists for "Already Paired" and "New Scanned" BLE devices.
+
+DeviceScanAdapter.java
+- The RecyclerView adapter for the device picker list.
+- Safely handles dataset updates to prevent UI flicker or crashes.
+
+GaugeView.java
+- A reusable custom View for drawing high-contrast semi-circular gauges.
+- Supports dynamic color mapping and rounded stroke caps.
+
+=========================================
+ML PACKAGE (com.example.badminton.ml)
+=========================================
+
+ShotClassifier.java
+- Wrapper for the TensorFlow Lite interpreter.
+- Loads 'shot_model.tflite' from assets.
+- Executes 1D-CNN inference on 128-sample data windows.
+
+=========================================
+MODEL PACKAGE (com.example.badminton.model)
+=========================================
+
+SwingData.java
+- A Data Transfer Object (DTO) that encapsulates a processed swing.
+- Stores metadata, calculated physics, and the raw IMU trajectory.
+
+=========================================
+PROCESSING PACKAGE (com.example.badminton.processing)
+=========================================
+
+SignalProcessor.java
+- A utility class containing biomechanical formulas.
+- Calculates impact force (Newtons) and integrates angular velocity for speed.
